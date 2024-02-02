@@ -3,6 +3,7 @@ export interface UserProps {
     username?: string;
     email?: string;
     password?: string;
+    _id?: string;
 }
   
 export interface UserStateProps {

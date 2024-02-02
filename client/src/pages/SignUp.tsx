@@ -2,15 +2,10 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
-
-type formDataProps = {
-  username?: string;
-  email?: string;
-  password?: string;
-}
+import { UserProps } from "../types/userTypes";
 
 const SignUp = () => {
-  const [formData, setFormData] = useState<formDataProps>({});
+  const [formData, setFormData] = useState<UserProps>({});
   const [errorMessage, setErrorMessage] = useState<string | null >(null);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate()
