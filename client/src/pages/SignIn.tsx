@@ -5,15 +5,10 @@ import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSli
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../hooks/useAppSelector";
 import OAuth from "../components/OAuth";
-
-type formDataProps = {
-  username?: string;
-  email?: string;
-  password?: string;
-}
+import {UserProps } from "../types/userTypes";
 
 const SignIn = () => {
-  const [formData, setFormData] = useState<formDataProps>({});
+  const [formData, setFormData] = useState<UserProps>({});
   const {loading, error: errorMessage }= useAppSelector(state => state.user)
   const dispatch = useDispatch();
   const navigate = useNavigate();
