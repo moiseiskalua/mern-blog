@@ -6,12 +6,31 @@ import {useAppSelector} from "../hooks/useAppSelector";
 import { RootStateProps } from "../types/userTypes";
 import { useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
+import { signoutSuccess } from "../redux/user/userSlice";
 
 const Header = () => {
   const path = useLocation().pathname;
   const dispatch = useDispatch();
   const { currentUser } = useAppSelector( (state: RootStateProps) => state.user);
   const { theme } = useAppSelector((state) => state.theme);
+
+  const handleSignout = async () => {
+    try {
+        const res = await fetch('/api/user/signout', {
+            method: 'POST',
+        });
+
+        const data = await res.json();
+
+        if(!res.ok) {
+            console.log(data.message);
+        } else {
+            dispatch(signoutSuccess());
+        }
+    } catch (error) {
+        console.log((error as Error).message);
+    }
+}
 
   return (
     <Navbar className="border-b-2">
@@ -59,7 +78,7 @@ const Header = () => {
                 <Dropdown.Item>Profile</Dropdown.Item>
               </Link>
               <Dropdown.Divider />
-              <Dropdown.Item>Sign out</Dropdown.Item>
+              <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
             </Dropdown>
           ) : 
             <Link to="/sign-in">
