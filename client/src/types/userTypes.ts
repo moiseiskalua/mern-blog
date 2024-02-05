@@ -8,6 +8,7 @@ export interface UserProps {
   
 export interface UserStateProps {
     currentUser: UserProps | null;
+    error?: Error | null | undefined;
   }
   
 export interface RootStateProps {
