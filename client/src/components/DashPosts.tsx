@@ -7,8 +7,9 @@ import { Link } from "react-router-dom";
 
 const DashPosts = () => {
   const { currentUser } = useAppSelector((state: RootStateProps) => state.user);
-  const [userPosts, setUserPosts] = useState<[postProps] | []>([]);
-  console.log(userPosts)
+  const [userPosts, setUserPosts] = useState<postProps[] | [] >([]);
+  const [showMore, setShowMore] = useState<boolean>(true);
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -16,6 +17,9 @@ const DashPosts = () => {
         const data = await res.json();
         if (res.ok) {
           setUserPosts(data.posts);
+          if (data.posts.length < 9) {
+            setShowMore(false);
+          }
         }
 
       } catch (error) {
@@ -28,6 +32,25 @@ const DashPosts = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?._id]);
+
+  const handleShowMore = async () => {
+    const startIndex = userPosts.length;
+
+    try {
+      const res = await fetch(`/api/post/getposts?userId=${currentUser?._id}&startIndex=${startIndex}`);
+      const data = await res.json();
+
+      if (res.ok) {
+        setUserPosts((prev) => [...prev, ...data.posts]);
+        if (data.posts.length < 9) {
+          setShowMore(false);
+        }
+      }
+
+    } catch (error) {
+      console.log((error as Error).message)
+    }
+  }
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar
@@ -75,6 +98,13 @@ const DashPosts = () => {
             </Table.Body>
           ))}
         </Table>
+        {
+          showMore && (
+            <button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm py-7">
+              Show more
+            </button>
+          )
+        }
       </>)
       : (
        <><p>You have no posts yet!</p></> 
