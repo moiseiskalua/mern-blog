@@ -5,5 +5,6 @@ export type postProps = {
     category?: string;
     content?: string;
     updatedAt?: string;
+    createdAt?: string;
     slug?: string;
 }
