@@ -5,6 +5,7 @@ export interface UserProps {
     password?: string;
     _id?: string;
     isAdmin?: boolean;
+    createdAt?: string;
 }
   
 export interface UserStateProps {
