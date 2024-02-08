@@ -3,4 +3,6 @@ export type commentProps = {
     userId: string;
     createdAt: string;
     content: string;
+    likes: string[];
+    numberOfLikes: number;
 }

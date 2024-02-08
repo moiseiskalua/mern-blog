@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../hooks/useAppSelector";
 import { RootStateProps } from "../types/userTypes";
 import { Alert, Button, Textarea } from "flowbite-react";
@@ -12,6 +12,7 @@ const CommentSection = ({postId} : {postId: string}) => {
     const [comment, setComment] = useState('');
     const [commentError, setCommentError] = useState<string | null>('');
     const [comments, setComments] = useState<commentProps[] | [] >([]);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -51,7 +52,35 @@ const CommentSection = ({postId} : {postId: string}) => {
             }
         };
         getComments();
-    }, [postId])
+    }, [postId]);
+
+    const handleLike = async ( commentId: string ) => {
+        try {
+            if (!currentUser) {
+                navigate('/sign-in')
+                return;
+            }
+            const res = await fetch(`/api/comment/likeComment/${commentId}`, {
+                method: 'PUT',
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setComments(
+                    comments.map((comment) =>
+                        comment._id === commentId ?
+                        {
+                            ...comment,
+                            likes: data.likes,
+                            numberOfLikes: data.likes.length,
+                        }
+                        : comment
+                    )
+                );
+            }
+        } catch (error) {
+            console.log((error as Error).message)
+        }
+    }
 
     return (
     <div className="max-w-2xl mx-auto w-full p-3">
@@ -109,6 +138,7 @@ const CommentSection = ({postId} : {postId: string}) => {
                         <Comment 
                             key={comment._id}
                             comment={comment}
+                            onLike={handleLike}
                         />
                     ))
                 }

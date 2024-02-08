@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react"
 import { commentProps } from "../types/commentTypes";
-import { UserProps } from "../types/userTypes";
+import { RootStateProps, UserProps } from "../types/userTypes";
 import moment from "moment";
+import { FaThumbsUp } from "react-icons/fa";
+import { useAppSelector } from "../hooks/useAppSelector";
 
-const Comment = ({comment} :{ comment: commentProps}) => {
+
+const Comment = ({ comment, onLike } :{ comment: commentProps, onLike: (commentId: string) => void}) => {
     const [user, setUser] = useState<UserProps>({});
+    const { currentUser } = useAppSelector((state: RootStateProps) => state.user);
 
     useEffect(() => {
         const  getUser = async () => {
@@ -34,6 +38,20 @@ const Comment = ({comment} :{ comment: commentProps}) => {
                 </span>
             </div>
             <p className="text-gray-500 pb-2">{comment.content}</p>
+            <div className="flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2">
+                <button type="button" onClick={() => onLike(comment._id)}
+                    className={`text-gray-400 hover:text-blue-500
+                    ${currentUser && comment.likes.includes(currentUser._id as string) && '!text-blue-500'}`}>
+                    <FaThumbsUp className="text-sm"/>
+                </button>
+                <p className="text-gray-400">
+                    {
+                        comment.numberOfLikes > 0 && (
+                           comment.numberOfLikes + " " + (comment.numberOfLikes === 1 ? "like" : "likes")
+                        )
+                    }
+                </p>
+            </div>
         </div>
     </div>
   )
