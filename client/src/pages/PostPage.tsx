@@ -4,12 +4,14 @@ import { postProps } from "../types/postTypes";
 import { Button, Spinner } from "flowbite-react";
 import CallToAction from "../components/CallToAction";
 import CommentSection from "../components/CommentSection";
+import PostCard from "../components/PostCard";
 
 const PostPage = () => {
     const { postSlug } = useParams();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
     const [post, setPost] = useState<postProps | undefined>(undefined);
+    const [recentPosts, setRecentPost] = useState<postProps[] | null>(null);
 
   
     useEffect(() => {
@@ -37,7 +39,26 @@ const PostPage = () => {
         };
 
         fetchPost();
-    }, [postSlug])
+    }, [postSlug]);
+
+    useEffect(() => {
+        try {
+            const fetchRecentPosts = async () => {
+                const res = await fetch(`/api/post/getposts?limit=3`);
+                const data = await res.json();
+                
+                if (res.ok) {
+                    setRecentPost(data.posts);
+                }
+            }
+
+            fetchRecentPosts();
+        } catch (error) {
+            console.log((error as Error).message)
+        }
+    }, []);
+
+
 
     console.log(error)
 
@@ -69,6 +90,20 @@ const PostPage = () => {
                 <CallToAction />
             </div>
             <CommentSection postId={post?._id as string} />
+            <div className="flex flex-col justify-center items-center mb-5">
+                <h1 className="text-xl mt-5">Recent articales</h1>
+                <div className="flex flex-wrap gap-5 justify-center mt-5">
+                    {
+                        recentPosts && 
+                            recentPosts.map((post) =>(
+                                <PostCard
+                                    key={post._id}
+                                    post={post}
+                                />
+                            ))
+                    }
+                </div>
+            </div>
         </main>
     )
 }
