@@ -10,9 +10,10 @@ interface CommentTypes {
     comment: commentProps;
     onLike: (commentId: string) => void;
     onEdit: (comment: commentProps, editedComment: string) => void;
+    onDelete: (commentId: string) => void;
 }
 
-const Comment = ({ comment, onLike, onEdit } : CommentTypes)  => {
+const Comment = ({ comment, onLike, onEdit, onDelete } : CommentTypes)  => {
     const [user, setUser] = useState<UserProps>({});
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editedContent, setEditedContent] = useState(comment.content);
@@ -116,13 +117,22 @@ const Comment = ({ comment, onLike, onEdit } : CommentTypes)  => {
                         </p>
                         {
                             currentUser && (currentUser._id === comment.userId || currentUser?.isAdmin) && (
-                                <button
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={handleEdit}
+                                        className="text-gray-400 hover:text-blue-500"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
                                     type="button"
-                                    onClick={handleEdit}
-                                    className="text-gray-400 hover:text-blue-500"
-                                >
-                                    Edit
-                                </button>
+                                    onClick={() => onDelete(comment._id)}
+                                    className="text-gray-400 hover:text-red-500"
+                                    >
+                                        Delete
+                                    </button>
+                                </>
                             )
                         }
                     </div>
